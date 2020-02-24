@@ -87,28 +87,41 @@ board = 'Uno';
 
 a = arduino(port,board);
 
-%handles.w = x;
-%guidata(hObject,handles);
+% handles.w = x;
+% guidata(hObject,handles);
 
-interv = 200;
+interv = 20000;
 init_time = 1;
 setappdata(0,'Pre',init_time);
-x = 0;
-yy = 0;
+x = linspace(0,100,350);
+b = linspace(0,100,350);
+%x = [x,b];
+yy = 1;
+xy = 0;
 while(init_time<interv)
-       b = readVoltage(a,'A0');
-       b2 = [b];
-       x = [x,b-1.6];
+       b(yy) = readVoltage(a,'A0') - 2.5 ;
+       x(yy) = xy;
+       %b2 = Filtro_Pasa_altas(b);
+       %x = [x,b-2.5];
        setappdata(0,'X',x);
-       plot(x);
+       plot(x,b);
        grid on
-       axis([0 inf -1 1]);
+       axis([0 inf -5 5]);
        xlabel('Time');
-       init_time = init_time+0.1;
+       init_time = init_time+1;
       
-       mav = abs(mean(b2));
+       mav = abs(mean(b));
        txt = set(handles.edit1,'String',mav);
-       drawnow
+       
+       if yy == 350
+           yy = 1;
+           
+           xy = 0;
+       else 
+           yy = yy+1;
+           xy = xy +1;
+       end
+       drawnow limitrate
        
 end
 
