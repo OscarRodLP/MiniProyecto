@@ -79,7 +79,34 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton1 (see GCBO)
 
 clear a;
-% 
+% instrreset;
+% s = serial('COM8','BaudRate',9600);
+% fopen(s)
+% interv = 1000;
+% init_time = 1;
+% setappdata(0,'Pre',init_time);
+% %x = linspace(0,100,350);
+% %b = linspace(0,100,350);
+% signal_reading = zeros(512,1);
+% X = 0;
+% w = 0;
+% %axes(handles.axes1);
+% tic;
+% while(init_time<interv)
+%        signal_reading = fscanf(s,'%e',5);
+%         X = [X,signal_reading];
+%        plot(X);
+%        %print(signal_reading);
+%        init_time = init_time+1;
+%        setappdata(0,'X',X);
+%        mav = abs(mean(signal_reading));
+%        %mav = toc;
+%        txt = set(handles.edit1,'String',mav); 
+%        drawnow limitrate
+% end
+% tt = toc;
+%      disp(tt)
+% fclose(s);
 instrreset;
 s = serial('COM8','BaudRate',9600);
 fopen(s);
@@ -90,22 +117,24 @@ y =linspace(0,1000,N);
 n = 1;
 
 
+%% Ejemplo 6: con handler, con "limitrate"
+%  Se recomienda esta opción para los mini-proyectos.
+
 h6 = plot(t,zeros(N,1));
 xlim([0,200]);
 
 while n < N*10
     tic;
     b = fscanf(s,'%d');
-    b2(n) = Filtro_Pasa_altas(b);
+    b2(n) = Filtro_Pasa_altas(b)';
     %b3(n) = Filter_TestLow(b2)';
     b4 = doFilter(b2)';
-    h6.YData(n) =b4(n)';
+    h6.YData(n) =b4(n);
     drawnow limitrate
-    setappdata(0,'X',b4);
-    mav = abs(mean(b4));
+    setappdata(0,'X',X);
+    mav = abs(mean(signal_reading));
     txt = set(handles.edit1,'String',mav); 
     tiempo6 = toc;
-    
    if n == 250
        n = 1;
    end
@@ -113,51 +142,6 @@ while n < N*10
      
 end
 fclose(s);
-% port = 'COM8';
-% board = 'Uno';
-% 
-% a = arduino(port,board);
-% 
-% % handles.w = x;
-% % guidata(hObject,handles);
-% 
-% interv = 20000;
-% init_time = 1;
-% setappdata(0,'Pre',init_time);
-% x = linspace(0,100,350);
-% b = linspace(0,100,350);
-% %x = [x,b];
-% yy = 1;
-% xy = 0;
-% while(init_time<interv)
-%        b(yy) = readVoltage(a,'A0') - 2.5 ;
-%        x(yy) = xy;
-%        b2 = Filtro_Pasa_altas(b);
-%        b3 = Filter_TestLow(b2)';
-%        b4 = doFilter(b3);
-%        %x = [x,b-2.5];
-%        setappdata(0,'X',x);
-%        plot(x,b4);
-%        grid on
-%        axis([0 inf -1 1]);
-%        xlabel('Time');
-%        init_time = init_time+1;
-%       
-%        mav = abs(mean(b));
-%        txt = set(handles.edit1,'String',mav);
-%        
-%        if yy == 350
-%            yy = 1;
-%            
-%            xy = 0;
-%        else 
-%            yy = yy+1;
-%            xy = xy +1;
-%        end
-%        drawnow limitrate
-%        
-% end
-
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
